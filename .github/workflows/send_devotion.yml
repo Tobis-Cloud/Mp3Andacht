@@ -1,0 +1,43 @@
+name: Daily Devotion Run
+
+on:
+  schedule:
+    # Jeden Morgen um 04:00 UTC (entspricht 06:00 Uhr deutscher Sommerzeit bzw. 05:00 Uhr deutscher Winterzeit)
+    - cron: '0 4 * * *'
+  workflow_dispatch: # Ermöglicht manuelles Starten über GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  run-devotion:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install edge-tts python-dotenv
+
+      - name: Run Devotion Script and Send Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TZ: 'Europe/Berlin'
+        run: |
+          python send_devotion.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add briefing/
+          git commit -m "chore: update daily devotion [skip ci]" || echo "No changes to commit"
+          git push
