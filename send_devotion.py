@@ -196,7 +196,12 @@ def main():
         day = int(match.group(1))
         month_name = match.group(2)
     else:
-        now = datetime.datetime.now()
+        # Use German timezone to ensure correct date even on cloud servers
+        try:
+            from zoneinfo import ZoneInfo
+            now = datetime.datetime.now(ZoneInfo("Europe/Berlin"))
+        except ImportError:
+            now = datetime.datetime.now()
         day = now.day
         month_name = GERMAN_MONTHS[now.month]
 
