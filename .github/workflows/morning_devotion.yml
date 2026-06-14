@@ -30,7 +30,10 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+<<<<<<< HEAD
           TZ: 'Europe/Berlin'
+=======
+>>>>>>> 8cc5beb35c74cb79d707e1d7106373f252d98fa8
         run: |
           python send_devotion.py
 
